@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+=ywufwph%56p_pr$y)t8nj7=*dzn)j=r$8h)&yv9p-y03a0hk'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -114,7 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-from ddtrace import tracer, patch_all, patch
+from ddtrace import tracer, patch_all
 
 patch_all()
 # patch(sqlite=True)
