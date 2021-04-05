@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'employees.apps.EmployeesConfig',
 ]
 
 MIDDLEWARE = [
@@ -113,7 +114,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-from ddtrace import tracer, patch_all
+from ddtrace import tracer, patch_all, patch
 
 patch_all()
+# patch(sqlite=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
