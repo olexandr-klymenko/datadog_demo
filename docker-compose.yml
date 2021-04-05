@@ -10,6 +10,8 @@ services:
       - ./ServiceA:/srv/
     env_file:
       - conf/ServiceA.env
+    depends_on:
+      - datadog
     command: python manage.py runserver 0.0.0.0:8000 --noreload
 
   fastapi:
@@ -20,4 +22,18 @@ services:
       - ./ServiceB/app:/srv/app
     env_file:
       - conf/ServiceB.env
+    depends_on:
+      - datadog
     command: python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+  datadog:
+    image: gcr.io/datadoghq/agent:latest
+    ports:
+      - "8126:8126/tcp"
+    env_file:
+      - conf/datadog.env
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /proc/:/host/proc/:ro
+     - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+     - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
