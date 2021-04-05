@@ -7,7 +7,17 @@ services:
     ports:
       - 8081:8000
     volumes:
-      - "./ServiceA:/srv/"
+      - ./ServiceA:/srv/
     env_file:
       - conf/ServiceA.env
     command: python manage.py runserver 0.0.0.0:8000 --noreload
+
+  fastapi:
+    build: ./ServiceB
+    ports:
+      - 8082:8000
+    volumes:
+      - ./ServiceB/app:/srv/app
+    env_file:
+      - conf/ServiceB.env
+    command: python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

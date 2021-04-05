@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - "8082:8000"
+    volumes:
+      - "./app:/srv/app"
+    env_file:
+      - conf/fastapi.env
+    depends_on:
+      - datadog
+    command: "python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+
+  datadog:
+    image: datadog/agent:latest
+    ports:
+      - "8126:8126/tcp"
+    env_file:
+      - conf/datadog.env
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /proc/:/host/proc/:ro
+     - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+     - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
