@@ -2,6 +2,7 @@ from datetime import date
 import logging
 from os import getenv
 from random import randint
+import traceback
 from typing import List
 
 import requests
@@ -20,8 +21,11 @@ api = NinjaAPI()
 @api.get("/service_b/check")
 def service_b_check(request: HttpRequest):
     statsd.increment("django3.views.check")
-    resp = requests.get(f"{getenv('SERVICE_B_URL')}/check")
-    return resp.json()
+    try:
+        return requests.get(f"{getenv('SERVICE_B_URL')}/check").json()
+    except:
+        logger.error("uncaught exception: %s", traceback.format_exc())
+        raise
 
 
 class DepartmentIn(Schema):
@@ -51,22 +55,24 @@ def create_employee(request, payload: DepartmentIn):
 
 @api.post("/employees")
 def create_employee(request, payload: EmployeeIn):
-    employee = Employee.objects.create(**payload.dict())
-    return {"id": employee.id}
+    return {"id": Employee.objects.create(**payload.dict()).id}
 
 
 @api.get("/employees/{employee_id}", response=EmployeeOut)
 def get_employee(request, employee_id: int):
-    employee = get_object_or_404(Employee, id=employee_id)
-    return employee
+    return get_object_or_404(Employee, id=employee_id)
 
 
 @api.get("/employees", response=List[EmployeeOut])
 def list_employees(request):
-    if randint(1, 10) == 7:
-        raise RuntimeError("ServiceA random runtime error")
-    qs = Employee.objects.all()
-    return qs
+    logger.debug("List of employees")
+    try:
+        if randint(1, 10) == 7:
+            raise RuntimeError("ServiceA random runtime error")
+        return Employee.objects.all()
+    except RuntimeError:
+        logger.error("uncaught exception: %s", traceback.format_exc())
+        return False
 
 
 @api.put("/employees/{employee_id}")

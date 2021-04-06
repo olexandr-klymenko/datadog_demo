@@ -1,9 +1,9 @@
 FROM python
 
-ENV DD_SERVICE django3
+ENV DD_SERVICE datadog_demo_django3
 ENV DD_VERSION 1.0
 
-LABEL com.datadoghq.tags.service="django3"
+LABEL com.datadoghq.tags.service="datadog_demo_django3"
 LABEL com.datadoghq.tags.version="1.0"
 
 COPY ./requirements.txt /srv/

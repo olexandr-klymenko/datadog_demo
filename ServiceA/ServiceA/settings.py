@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
-from ddtrace import tracer, patch_all
+from ddtrace import tracer, patch_all, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,13 +120,13 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "standard": {"format": "%(levelname)-8s [%(asctime)s] %(name)s: %(message)s"},
+        "json": {'()': 'json_log_formatter.JSONFormatter'},
     },
     "handlers": {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            "formatter": "standard",
+            "formatter": "json",
         },
     },
     "loggers": {
@@ -139,5 +139,6 @@ LOGGING = {
 }
 
 patch_all()
-# patch(sqlite=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
+
+config.django['database_service_name'] = 'sqlite'
