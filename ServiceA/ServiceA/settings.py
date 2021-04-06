@@ -138,7 +138,6 @@ LOGGING = {
     },
 }
 
-
 patch_all()
 # patch(sqlite=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
