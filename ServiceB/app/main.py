@@ -28,7 +28,6 @@ app = FastAPI()
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 
 
-@tracer.wrap()
 @app.get("/check")
 def check():
     statsd.increment("fastapi.views.check")

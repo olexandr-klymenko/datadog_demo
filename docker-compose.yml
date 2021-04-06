@@ -33,6 +33,7 @@ services:
       - "8126:8126/tcp"
     env_file:
       - conf/datadog.env
+      - conf/dd_api_key.env
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
      - /proc/:/host/proc/:ro

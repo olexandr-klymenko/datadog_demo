@@ -19,9 +19,9 @@ logger = logging.getLogger("ServiceA")
 api = NinjaAPI()
 
 
-@tracer.wrap()
 @api.get("/service_b/check")
 def service_b_check(request: HttpRequest):
+    logger.info("Cross service request")
     statsd.increment("django3.views.check")
     try:
         return requests.get(f"{getenv('SERVICE_B_URL')}/check").json()
@@ -55,6 +55,7 @@ def create_employee(request, payload: DepartmentIn):
     return {"id": department.id}
 
 
+@tracer.wrap()
 @api.post("/employees")
 def create_employee(request, payload: EmployeeIn):
     return {"id": Employee.objects.create(**payload.dict()).id}
@@ -67,7 +68,8 @@ def get_employee(request, employee_id: int):
 
 @api.get("/employees", response=List[EmployeeOut])
 def list_employees(request):
-    logger.debug("List of employees")
+    logger.info("List of employees")
+    statsd.increment("django3.views.employees")
     try:
         if randint(1, 10) == 7:
             raise RuntimeError("ServiceA random runtime error")
