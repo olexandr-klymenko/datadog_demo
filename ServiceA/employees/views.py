@@ -1,24 +1,31 @@
 from datetime import date
+import logging
 from os import getenv
+from random import randint
 from typing import List
 
 import requests
+from datadog import statsd
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI, Schema
 
-from .models import Employee
+from .models import Employee, Department
+
+logger = logging.getLogger("ServiceA")
 
 api = NinjaAPI()
 
 
-@api.get("/info")
-def info(request):
-    return {"title": "DJango3.1"}
+@api.get("/service_b/check")
+def service_b_check(request: HttpRequest):
+    statsd.increment("django3.views.check")
+    resp = requests.get(f"{getenv('SERVICE_B_URL')}/check")
+    return resp.json()
 
 
-@api.get("/serviceb/info")
-def serviceb_info(request):
-    return requests.get(f"{getenv('SERVICE_B_URL')}/info").json()
+class DepartmentIn(Schema):
+    title: str
 
 
 class EmployeeIn(Schema):
@@ -36,6 +43,12 @@ class EmployeeOut(Schema):
     birthdate: date = None
 
 
+@api.post("/departments")
+def create_employee(request, payload: DepartmentIn):
+    department = Department.objects.create(**payload.dict())
+    return {"id": department.id}
+
+
 @api.post("/employees")
 def create_employee(request, payload: EmployeeIn):
     employee = Employee.objects.create(**payload.dict())
@@ -50,6 +63,8 @@ def get_employee(request, employee_id: int):
 
 @api.get("/employees", response=List[EmployeeOut])
 def list_employees(request):
+    if randint(1, 10) == 7:
+        raise RuntimeError("ServiceA random runtime error")
     qs = Employee.objects.all()
     return qs
 

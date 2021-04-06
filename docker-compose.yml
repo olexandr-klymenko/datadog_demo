@@ -13,14 +13,14 @@ services:
       - conf/secret.env
     depends_on:
       - datadog
-    command: python manage.py runserver 0.0.0.0:8000 --noreload
+    command: python manage.py runserver 0.0.0.0:8000
 
   fastapi:
     build: ./ServiceB
     ports:
       - 8082:8000
     volumes:
-      - ./ServiceB/app:/srv/app
+      - ./ServiceB:/srv/
     env_file:
       - conf/ServiceB.env
     depends_on:
