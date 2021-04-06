@@ -120,13 +120,17 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "json": {'()': 'json_log_formatter.JSONFormatter'},
+        "standard": {
+            "format": "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d]"
+            " [dd.service=%(dd.service)s dd.env=%(dd.env)s dd.version=%(dd.version)s"
+            " dd.trace_id=%(dd.trace_id)s dd.span_id=%(dd.span_id)s]- %(message)s"
+        },
     },
     "handlers": {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            "formatter": "json",
+            "formatter": "standard",
         },
     },
     "loggers": {
@@ -138,7 +142,7 @@ LOGGING = {
     },
 }
 
-patch_all()
+patch_all(logging=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 
-config.django['database_service_name'] = 'sqlite'
+config.django["database_service_name"] = "sqlite"

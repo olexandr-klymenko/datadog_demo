@@ -5,6 +5,7 @@ from random import randint
 import traceback
 from typing import List
 
+from ddtrace import tracer
 import requests
 from datadog import statsd
 from django.http import HttpRequest
@@ -18,6 +19,7 @@ logger = logging.getLogger("ServiceA")
 api = NinjaAPI()
 
 
+@tracer.wrap()
 @api.get("/service_b/check")
 def service_b_check(request: HttpRequest):
     statsd.increment("django3.views.check")
