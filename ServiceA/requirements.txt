@@ -2,3 +2,4 @@ Django==3.2
 datadog==0.40.1
 ddtrace==0.48.0
 django-ninja==0.12.2
+python-json-logger==2.0.1
