@@ -21,13 +21,17 @@ api = NinjaAPI()
 
 @api.get("/service_b/check")
 def service_b_check(request: HttpRequest):
-    logger.info("Cross service request")
+    url = f"{getenv('SERVICE_B_URL')}/check"
+    logger.info("Cross service request to '%s'", url)
     statsd.increment("django3.views.check")
     try:
-        return requests.get(f"{getenv('SERVICE_B_URL')}/check").json()
+        resp = requests.get(url).json()
     except:
         logger.error("uncaught exception: %s", traceback.format_exc())
         raise
+    else:
+        logger.info("Got response from '%s'", url)
+        return resp
 
 
 class DepartmentIn(Schema):
@@ -68,15 +72,18 @@ def get_employee(request, employee_id: int):
 
 @api.get("/employees", response=List[EmployeeOut])
 def list_employees(request):
-    logger.info("List of employees")
+    logger.info("Requesting list of employees ...")
     statsd.increment("django3.views.employees")
     try:
         if randint(1, 10) == 7:
             raise RuntimeError("ServiceA random runtime error")
-        return Employee.objects.all()
+        resp = Employee.objects.all()
     except RuntimeError:
         logger.error("uncaught exception: %s", traceback.format_exc())
         return False
+    else:
+        logger.info("Got list of employees.")
+        return resp
 
 
 @api.put("/employees/{employee_id}")

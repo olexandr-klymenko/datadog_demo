@@ -18,7 +18,7 @@ FORMAT = (
     " dd.trace_id=%(dd.trace_id)s dd.span_id=%(dd.span_id)s] - %(message)s"
 )
 logging.basicConfig(format=FORMAT)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("ServiceB")
 logger.level = logging.DEBUG
 
 initialize(statsd_host=os.getenv("DATADOG_HOST"))
