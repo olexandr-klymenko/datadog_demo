@@ -1,5 +1,6 @@
 SERVICE_A=django3
-DATADOG_DEMO=datadog_demo
+DATADOG_DEMO=demo
+DEMO_ITERATIONS=100
 
 HIDE_DOCKER_CLI_DETAILES=COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1
 
@@ -15,11 +16,8 @@ up:
 down:
 	docker-compose down
 
-build_demo:
-	docker build demo -t $(DATADOG_DEMO)
-
 run_demo:
-	docker run -t $(DATADOG_DEMO) python run_demo.py
+	docker-compose run --rm $(DATADOG_DEMO) python run_demo.py $(DEMO_ITERATIONS)
 
 restart: down build up
 

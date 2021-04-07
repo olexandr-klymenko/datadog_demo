@@ -19,6 +19,11 @@ make init_db
 make up
 ```
 
+## Run requests for filling datadog with data
+```sh
+make DEMO_ITERATIONS=<number of requests> run_demo
+```
+`number of requests` - number of requests to fill datadog with data, default 100
 
 ## Stop the container
 ```sh

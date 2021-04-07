@@ -82,7 +82,7 @@ def list_employees(request):
     logger.info("Requesting list of employees ...")
     statsd.increment("django3.views.employees.count")
     try:
-        if randint(1, 10) == 7:
+        if randint(1, 12) == 7:
             raise RuntimeError("ServiceA random runtime error")
         resp = employees_from_db()
     except RuntimeError:
