@@ -21,21 +21,25 @@ logging.basicConfig(format=FORMAT)
 logger = logging.getLogger("ServiceB")
 logger.level = logging.DEBUG
 
-initialize(statsd_host=os.getenv("DATADOG_HOST"))
+initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125)
+tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 
 app = FastAPI()
 
-tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
+
+@statsd.timed("fastapi.views.check.timer", tags=["function:do_check"])
+def do_check():
+    sleep(random())
 
 
 @app.get("/check")
 def check():
-    statsd.increment("fastapi.views.check")
+    statsd.increment("fastapi.views.check.count")
     logger.info("ServiceB check")
     try:
         if randint(1, 10) == 7:
             raise RuntimeError("ServiceB random runtime error")
-        sleep(random())
+        do_check()
         return {"message": "success"}
     except RuntimeError:
         logger.exception("uncaught exception: %s", traceback.format_exc())

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+from datadog import initialize
 from ddtrace import tracer, patch_all, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -144,5 +145,6 @@ LOGGING = {
 
 patch_all(logging=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
+initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125)
 
 config.django["database_service_name"] = "sqlite"

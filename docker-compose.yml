@@ -30,7 +30,8 @@ services:
   datadog:
     image: gcr.io/datadoghq/agent:latest
     ports:
-      - "8126:8126/tcp"
+      - 8126:8126/tcp # Tracing Docker Applications
+      - 8125:8125/udp # DogStatsD
     env_file:
       - conf/datadog.env
       - conf/dd_api_key.env

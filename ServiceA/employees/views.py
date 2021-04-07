@@ -1,8 +1,9 @@
 from datetime import date
 import logging
 from os import getenv
-from random import randint
+from random import randint, random
 import traceback
+from time import sleep
 from typing import List
 
 from ddtrace import tracer
@@ -23,7 +24,7 @@ api = NinjaAPI()
 def service_b_check(request: HttpRequest):
     url = f"{getenv('SERVICE_B_URL')}/check"
     logger.info("Cross service request to '%s'", url)
-    statsd.increment("django3.views.check")
+    statsd.increment("django3.views.check.count")
     try:
         resp = requests.get(url).json()
     except:
@@ -70,14 +71,20 @@ def get_employee(request, employee_id: int):
     return get_object_or_404(Employee, id=employee_id)
 
 
+@statsd.timed("django3.views.employees.timer", tags=["function:employees_from_db"])
+def employees_from_db():
+    sleep(random())
+    return Employee.objects.all()
+
+
 @api.get("/employees", response=List[EmployeeOut])
 def list_employees(request):
     logger.info("Requesting list of employees ...")
-    statsd.increment("django3.views.employees")
+    statsd.increment("django3.views.employees.count")
     try:
         if randint(1, 10) == 7:
             raise RuntimeError("ServiceA random runtime error")
-        resp = Employee.objects.all()
+        resp = employees_from_db()
     except RuntimeError:
         logger.error("uncaught exception: %s", traceback.format_exc())
         return False
