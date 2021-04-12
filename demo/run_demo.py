@@ -7,7 +7,7 @@ import httpx
 
 API_URL = getenv("API_URL")
 
-ENDPOINTS = ["employees", "service_b/check"]
+ENDPOINTS = ["service_b/check", "employees", "service_b/check"]
 
 ITERATIONS = int(sys.argv[1])
 

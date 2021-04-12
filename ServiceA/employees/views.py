@@ -29,9 +29,11 @@ def service_b_check(request: HttpRequest):
         resp = requests.get(url).json()
     except:
         logger.error("uncaught exception: %s", traceback.format_exc())
+        statsd.increment("django3.views.check_failure.count")
         raise
     else:
         logger.info("Got response from '%s'", url)
+        statsd.increment("django3.views.check_success.count")
         return resp
 
 
@@ -42,16 +44,16 @@ class DepartmentIn(Schema):
 class EmployeeIn(Schema):
     first_name: str
     last_name: str
-    department_id: int = None
-    birthdate: date = None
+    department_id: int
+    birthdate: date
 
 
 class EmployeeOut(Schema):
     id: int
     first_name: str
     last_name: str
-    department_id: int = None
-    birthdate: date = None
+    department_id: int
+    birthdate: date
 
 
 @api.post("/departments")
@@ -87,9 +89,11 @@ def list_employees(request):
         resp = employees_from_db()
     except RuntimeError:
         logger.error("uncaught exception: %s", traceback.format_exc())
+        statsd.increment("django3.views.employees_failure.count")
         return False
     else:
         logger.info("Got list of employees.")
+        statsd.increment("django3.views.employees_success.count")
         return resp
 
 
