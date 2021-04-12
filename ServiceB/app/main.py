@@ -8,19 +8,24 @@ import uvicorn
 from datadog import initialize, statsd
 from ddtrace import patch, tracer, patch_all
 from fastapi import FastAPI
-from pythonjsonlogger import jsonlogger
+from log_formatter import CustomJsonFormatter
 
-logger = logging.getLogger()
+
+class CustomLogger(logging.Logger):
+    propagate = False
+
+
+logger = CustomLogger("fastapi")
 
 logHandler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter()
+formatter = CustomJsonFormatter()
 logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
 
 patch(fastapi=True)
 patch_all(logging=True)
 
-initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125)
+initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125, host_name="fastapi")
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 
 app = FastAPI()
