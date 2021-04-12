@@ -122,7 +122,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "console": {
-            "class": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "class": "log_formatter.CustomJsonFormatter",
         },
     },
     "handlers": {

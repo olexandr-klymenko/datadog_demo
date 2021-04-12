@@ -41,7 +41,7 @@ def check():
     statsd.increment("fastapi.views.check.count")
     logger.info("ServiceB check")
     try:
-        if randint(1, 12) == 7:
+        if randint(1, 10) == 7:
             raise RuntimeError("ServiceB random runtime error")
         do_check()
         return {"message": "success"}
