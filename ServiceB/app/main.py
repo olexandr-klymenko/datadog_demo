@@ -42,8 +42,10 @@ def check():
     logger.info("ServiceB check")
     try:
         if randint(1, 10) == 7:
+            statsd.increment("fastapi.views.check.failure")
             raise RuntimeError("ServiceB random runtime error")
         do_check()
+        statsd.increment("fastapi.views.check.success")
         return {"message": "success"}
     except RuntimeError:
         logger.exception("uncaught exception: %s", traceback.format_exc())

@@ -7,21 +7,25 @@ import httpx
 
 API_URL = getenv("API_URL")
 
-ENDPOINTS = ["service_b/check", "employees", "service_b/check"]
+ENDPOINTS = ["employees", "service_b/check"]
 
+TASKS_NUMBER = 100
 ITERATIONS = int(sys.argv[1])
 
 
 async def make_request():
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{API_URL}/{choice(ENDPOINTS)}")
-        print(resp)
+        _ = await client.get(f"{API_URL}/{choice(ENDPOINTS)}")
+        print(".", end="")
 
 
 async def main():
     await asyncio.gather(
-        *[asyncio.create_task(make_request()) for _ in range(ITERATIONS)]
+        *[asyncio.create_task(make_request()) for _ in range(TASKS_NUMBER)]
     )
+    print()
 
 
-asyncio.run(main())
+for idx, _ in enumerate(range(ITERATIONS)):
+    print(f"Iteration {idx+1}")
+    asyncio.run(main())
