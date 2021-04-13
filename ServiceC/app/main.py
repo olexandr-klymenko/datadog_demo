@@ -1,13 +1,27 @@
-import os
 import json
+import logging
+import os
 
 from asgiref.wsgi import WsgiToAsgi
+from datadog import initialize
+from ddtrace import tracer, patch_all
+from ddtrace.contrib.pyramid import trace_pyramid
 from pyramid.config import Configurator
 from pyramid.response import Response
 
-from ddtrace import tracer, patch_all
-from datadog import initialize
-from ddtrace.contrib.pyramid import trace_pyramid
+from log_formatter import CustomJsonFormatter
+
+
+class CustomLogger(logging.Logger):
+    propagate = False
+
+
+logger = CustomLogger("pyramid")
+
+logHandler = logging.StreamHandler()
+formatter = CustomJsonFormatter()
+logHandler.setFormatter(formatter)
+logger.addHandler(logHandler)
 
 settings = {
     "datadog_trace_service": "pyramid",
@@ -15,6 +29,7 @@ settings = {
 
 
 def hello_world(request):
+    logger.info("ServiceC check")
     response = Response(json.dumps({"message": "success"}))
     response.status = "200 OK"
     response.status_int = 200
