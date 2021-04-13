@@ -37,6 +37,20 @@ def service_b_check(request: HttpRequest):
         return resp
 
 
+@api.get("/service_c/check")
+def service_c_check(request: HttpRequest):
+    url = f"{getenv('SERVICE_C_URL')}"
+    logger.info("Cross service request to '%s'", url)
+    try:
+        resp = requests.get(url).json()
+    except:
+        logger.error("uncaught exception: %s", traceback.format_exc())
+        raise
+    else:
+        logger.info("Got response from '%s'", url)
+        return resp
+
+
 class DepartmentIn(Schema):
     title: str
 

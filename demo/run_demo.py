@@ -7,7 +7,7 @@ import httpx
 
 API_URL = getenv("API_URL")
 
-ENDPOINTS = ["employees", "service_b/check"]
+ENDPOINTS = ["employees", "service_b/check", "service_c/check"]
 
 TASKS_NUMBER = 100
 ITERATIONS = int(sys.argv[1])

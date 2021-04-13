@@ -28,6 +28,18 @@ services:
       - datadog
     command: python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --use-colors --log-config logging_config.conf
 
+  pyramid:
+    build: ./ServiceC
+    ports:
+      - 8083:8000
+    volumes:
+      - ./ServiceC:/srv/
+    env_file:
+      - conf/ServiceC.env
+    depends_on:
+      - datadog
+    command: python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --use-colors --log-config logging_config.conf
+
   datadog:
     image: gcr.io/datadoghq/agent:latest
     ports:

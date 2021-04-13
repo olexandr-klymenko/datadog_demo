@@ -14,6 +14,7 @@ from pathlib import Path
 
 from datadog import initialize
 from ddtrace import tracer, patch_all, config
+from django.utils.log import DEFAULT_LOGGING
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,6 +135,11 @@ LOGGING = {
     },
     "loggers": {
         "ServiceA": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.server": {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
