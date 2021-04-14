@@ -150,5 +150,3 @@ LOGGING = {
 patch_all(logging=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125)
-
-config.django["database_service_name"] = "sqlite"

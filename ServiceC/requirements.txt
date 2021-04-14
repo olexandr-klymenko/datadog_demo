@@ -1,7 +1,11 @@
 pyramid==2.0
+pyramid_retry==2.1.1
+pyramid_tm==2.4
 waitress==2.0.0
 datadog==0.40.1
 ddtrace==0.48.0
 uvicorn==0.13.4
 asgiref==3.3.4
 python-json-logger==2.0.1
+sqlalchemy==1.4.7
+zope.sqlalchemy==1.3
