@@ -232,3 +232,4 @@ dmypy.json
 
 conf/secret.env
 conf/dd_api_key.env
+/ServiceC/employees.db
