@@ -1,4 +1,12 @@
 # Datadog with python applications integration demo
+There are three apps/services:
+* ServiceA (`django3`)
+* ServiceB (`fastapi`)
+* ServiceC (`pyramid`)
+
+`django3` is API with `OpenAPI` frontend at (http://127.0.0.1:8081/api/docs),
+where you can make GET requests to `fastapi` and `pyramid` apps. 
+The deployment is made by `docker-compose` means
 
 ## Requirements
 * docker with docker-compose
@@ -38,10 +46,4 @@ make run_demo [DEMO_ITERATIONS=<number of requests>]
 ## Stop the container
 ```sh
 make down
-```
-
-## How to filter log messages by trace_id
-In search field put following query:
-```
-dd.trace_id\=<TRACE_ID>
 ```
