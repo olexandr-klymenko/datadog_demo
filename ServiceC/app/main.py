@@ -6,7 +6,7 @@ import sqlalchemy as db
 import zope.sqlalchemy
 from asgiref.wsgi import WsgiToAsgi
 from datadog import initialize
-from ddtrace import tracer, patch_all
+from ddtrace import tracer, patch
 from ddtrace.contrib.pyramid import trace_pyramid
 from pyramid.config import Configurator
 from pyramid.response import Response
@@ -30,7 +30,7 @@ logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
 
 settings = {
-    "datadog_trace_service": "pyramid",
+    "datadog_trace_service": "datadog_demo_pyramid",
 }
 
 
@@ -67,17 +67,8 @@ def get_tm_session(session_factory, transaction_manager):
     return dbsession
 
 
-def check(request):
-    logger.info("ServiceC check")
-    response = Response(json.dumps({"message": "success"}))
-    response.status = "200 OK"
-    response.status_int = 200
-    response.content_type = "application/json"
-    response.charset = "utf-8"
-    return response
-
-
 def employees(request):
+    logger.info("Querying SQLite database for list of employees ...")
     res = request.dbsession.query(models.Employee).all()
     response = Response(json.dumps({"employees": res}))
     response.status = "200 OK"
@@ -88,8 +79,6 @@ def employees(request):
 
 
 with Configurator(settings=settings) as pyramid_config:
-    pyramid_config.add_route("check", "/check")
-    pyramid_config.add_view(check, route_name="check")
     pyramid_config.add_route("employees", "/employees")
     pyramid_config.add_view(employees, route_name="employees")
 
@@ -111,7 +100,7 @@ with Configurator(settings=settings) as pyramid_config:
     )
     tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
     trace_pyramid(pyramid_config)
-    patch_all(logging=True, sqlalchemy=True, sqlite3=True)
+    patch(sqlalchemy=True, logging=True, sqlite3=True)
     wsgi_app = pyramid_config.make_wsgi_app()
 
 app = WsgiToAsgi(wsgi_app)
