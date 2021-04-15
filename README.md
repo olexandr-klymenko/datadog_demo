@@ -14,6 +14,16 @@ make build
 make init_db
 ```
 
+## Create `dd_api_key.env` in `conf` folder:
+```
+DD_API_KEY=<your key goes here>
+```
+
+## Create `secret.env` for Django app in `conf` folder:
+```
+SECRET_KEY=<your Django secret key goes here>
+```
+
 ## Deploy all containers
 ```sh
 make up
@@ -21,9 +31,9 @@ make up
 
 ## Run requests for filling datadog with data
 ```sh
-make DEMO_ITERATIONS=<number of requests> run_demo
+make run_demo [DEMO_ITERATIONS=<number of requests>]
 ```
-`number of requests` - number of requests to fill datadog with data, default 100
+`number of requests` - number of test iterations, default 1
 
 ## Stop the container
 ```sh
