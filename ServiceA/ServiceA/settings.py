@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 from datadog import initialize
-from ddtrace import tracer, patch
+from ddtrace import tracer, patch_all
 from django.utils.log import DEFAULT_LOGGING
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -147,6 +147,6 @@ LOGGING = {
     },
 }
 
-patch(logging=True)
+patch_all(logging=True)
 tracer.configure(hostname=os.getenv("DATADOG_HOST"), port=8126, enabled=True)
 initialize(statsd_host=os.getenv("DATADOG_HOST"), statsd_port=8125, host_name="django3")
